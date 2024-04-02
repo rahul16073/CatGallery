@@ -1,6 +1,6 @@
 # Cat Image Viewer App
 
-This Android app showcases adorable cat images using modern Android development practices, including Kotlin, Jetpack Compose, MVVM architecture, Dagger-Hilt for dependency injection, and Clean Architecture principles.
+This Android app showcases cat images using modern Android development practices, including Kotlin, Jetpack Compose, MVVM architecture, Dagger-Hilt for dependency injection, and Clean Architecture principles.
 
 Features->
 Fetches cat images from a remote API.
