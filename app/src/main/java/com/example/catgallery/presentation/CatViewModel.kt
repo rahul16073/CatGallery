@@ -1,9 +1,8 @@
 package com.example.catgallery.presentation
 
-import android.health.connect.datatypes.DistanceRecord
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.catgallery.domain.model.CatData
@@ -27,5 +26,14 @@ class CatViewModel @Inject constructor(private val repository: Repository): View
                 }
             }
         }
+    }
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
+        return false
     }
 }

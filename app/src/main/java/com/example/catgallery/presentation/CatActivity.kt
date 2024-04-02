@@ -3,6 +3,7 @@ package com.example.catgallery.presentation
 import android.content.Context
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -53,9 +54,14 @@ class CatActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    viewModel.fetchCatList()
-                    Column(modifier = Modifier) {
-                        SetCatListLazyView(catList = viewModel.catList)
+                    if(viewModel.isNetworkAvailable(this)) {
+                        viewModel.fetchCatList()
+                        Column(modifier = Modifier) {
+                            SetCatListLazyView(catList = viewModel.catList)
+                        }
+                    }
+                    else{
+                        Toast.makeText(this, "Network not available", Toast.LENGTH_LONG).show()
                     }
                 }
             }
