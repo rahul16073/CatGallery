@@ -3,6 +3,7 @@ package com.example.catgallery.presentation
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.catgallery.domain.model.CatData
@@ -17,13 +18,20 @@ import javax.inject.Inject
 class CatViewModel @Inject constructor(private val repository: Repository): ViewModel() {
     private var _catList = mutableStateListOf<CatData>()
     val catList = _catList
+    private var _isError = mutableStateOf(false)
+    val isError = _isError
     fun fetchCatList(){
-        viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.fetchCatList()
-            if (result != null) {
-                withContext(Dispatchers.Main){
-                    _catList.addAll(result)
-                }
+        viewModelScope.launch {
+            try {
+                val result = withContext(Dispatchers.IO) { repository.fetchCatList() }
+                    if (result != null) {
+                        _isError.value = false
+                        _catList.addAll(result)
+                    } else
+                        _isError.value = true
+            }
+            catch (e: Exception){
+                _isError.value = true
             }
         }
     }
@@ -32,8 +40,11 @@ class CatViewModel @Inject constructor(private val repository: Repository): View
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (connectivityManager != null) {
             val activeNetworkInfo = connectivityManager.activeNetworkInfo
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected
+            val isNetworkAvailable = activeNetworkInfo != null && activeNetworkInfo.isConnected
+            _isError.value = !isNetworkAvailable
+            return isNetworkAvailable
         }
+        _isError.value = true
         return false
     }
 }
